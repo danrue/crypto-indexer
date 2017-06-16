@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # CryptoCurrency Asset Allocator
 
+import operator
 import os
 import requests
 import sys
@@ -15,7 +16,7 @@ def get_price_usd(coin):
             return float(crypto['price_usd'])
 
 
-def get_crypto_cap_by_percent(min_cap_percent=.01):
+def get_crypto_cap_by_percent():
     crypto_by_cap = {}
     crypto_by_usd = {}
     total_cap = 0
@@ -28,8 +29,7 @@ def get_crypto_cap_by_percent(min_cap_percent=.01):
     crypto_cap_by_percent = {}
     for symbol, market_cap_usd in crypto_by_cap.items():
         cap_percent = float(market_cap_usd)/float(total_cap)
-        if cap_percent >= min_cap_percent:
-            crypto_cap_by_percent[symbol] = cap_percent
+        crypto_cap_by_percent[symbol] = cap_percent
 
     return crypto_cap_by_percent
 
@@ -43,8 +43,8 @@ class coin(object):
         self.value_usd = self.amount_owned*self.price_usd
 
     def __repr__(self):
-        return "{}: {:>5} coins, ${:,.2f}\n".format(
-            self.symbol, self.amount_owned, self.value_usd)
+        return "{}: {:>5}, ${:,.0f}/coin, ${:,.0f}\n".format(
+            self.symbol, self.amount_owned, self.price_usd, self.value_usd)
 
 
 class portfolio(object):
@@ -70,7 +70,7 @@ class portfolio(object):
             lines.append(coin.__repr__())
         lines.sort()
         buf += "".join(lines)
-        buf += "Portfolio(USD): ${:,.2f}".format(self.value)
+        buf += "Portfolio(USD): ${:,.0f}".format(self.value)
         return buf
 
     def _get_my_cap_by_percent(self):
@@ -79,29 +79,27 @@ class portfolio(object):
             crypto_by_percent[symbol] = coin.value_usd/self.value
         return crypto_by_percent
 
-    def rebalance(self):
-        buf = "Portfolio Rebalance\n"
-        buf += "===================\n"
-        lines = []
-        for symbol, market_weight in self.crypto_cap_by_percent.items():
-            change_percent = market_weight-self.my_cap_by_percent.get(
-                symbol, 0)
-            change_usd = change_percent*self.value
-            lines.append("{:>4}: {:>6.2f}%, ${:,.2f}\n".format(
-                symbol, change_percent*100, change_usd))
-        lines.sort()
-        return buf + "".join(lines)
-
     def crypto_by_weight(self):
         buf = "\nCurrencies and their relative market weight\n"
         buf += "===========================================\n"
+        index = 0
+        sorted_crypto_by_percent = sorted(self.crypto_cap_by_percent.items(), 
+            key=operator.itemgetter(1), reverse=True)
+
         lines = []
-        for symbol, market_weight in self.crypto_cap_by_percent.items():
+        for symbol, market_weight in sorted_crypto_by_percent:
+            index += 1
+            change_percent = market_weight-self.my_cap_by_percent.get(
+                symbol, 0)
+            change_usd = change_percent*self.value
+            if market_weight < .005 and self.my_cap_by_percent.get(symbol, 0) == 0:
+                continue
             lines.append(
-                "{:>4}: market: {:>5.2f}% portfolio: {:.2f}%\n".format(
+                "{:>2}. {:>5}: market: {:>5.2f}% portfolio: {:>5.2f}% rebalance: ${:,.0f}\n".format(
+                    index,
                     symbol, market_weight*100,
-                    self.my_cap_by_percent.get(symbol, 0)*100))
-        lines.sort()
+                    self.my_cap_by_percent.get(symbol, 0)*100,
+                    change_usd))
         return buf + "".join(lines)
 
 
@@ -119,4 +117,3 @@ if __name__ == "__main__":
     my_port = portfolio(holdings)
     print(my_port)
     print(my_port.crypto_by_weight())
-    print(my_port.rebalance())
