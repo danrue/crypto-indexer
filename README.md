@@ -7,26 +7,26 @@ Given a portfolio defined in portfolio.yaml (see portfolio.yaml-sample), find
 its value, all cryptocurrencies with more than .5% overall market capitalization
 weight, and the amount required to rebalance equally across said currencies.
 
-	$ ./aa.py portfolio.yaml-sample
+    $ ./aa.py portfolio.yaml-sample
 
-	Currencies and their relative market weight
-	===========================================
-			  Spot   Market Port   Position Rebalance
-	 1. BTC   $2,456 38.91% 77.14% $51,591 $-25,569
-	 2. ETH   $353   31.63% 22.22% $14,862 $6,292
-	 3. XRP   $0.26   9.62%  0.00% $0      $6,432
-	 4. XEM   $0.19   1.67%  0.00% $0      $1,120
-	 5. ETC   $18.03  1.61%  0.00% $0      $1,079
-	 6. LTC   $30.21  1.51%  0.59% $393    $614
-	 7. DASH  $163    1.16%  0.00% $0      $776
-	 8. MIOTA $0.33   0.90%  0.00% $0      $601
-	 9. BTS   $0.32   0.81%  0.00% $0      $543
-	10. STRAT $7.85   0.75%  0.00% $0      $499
-	11. XMR   $45.68  0.65%  0.00% $0      $432
-	12. ZEC   $384    0.57%  0.00% $0      $381
-	18. XLM   $0.04   0.35%  0.05% $31     $200
+    Currencies and their relative market weight
+    ===========================================
+              Spot   Market Port   Position Rebalance
+     1. BTC   $2,456 38.91% 77.14% $51,591 $-25,569
+     2. ETH   $353   31.63% 22.22% $14,862 $6,292
+     3. XRP   $0.26   9.62%  0.00% $0      $6,432
+     4. XEM   $0.19   1.67%  0.00% $0      $1,120
+     5. ETC   $18.03  1.61%  0.00% $0      $1,079
+     6. LTC   $30.21  1.51%  0.59% $393    $614
+     7. DASH  $163    1.16%  0.00% $0      $776
+     8. MIOTA $0.33   0.90%  0.00% $0      $601
+     9. BTS   $0.32   0.81%  0.00% $0      $543
+    10. STRAT $7.85   0.75%  0.00% $0      $499
+    11. XMR   $45.68  0.65%  0.00% $0      $432
+    12. ZEC   $384    0.57%  0.00% $0      $381
+    18. XLM   $0.04   0.35%  0.05% $31     $200
 
-	Total: $66,877.70
+    Total: $66,877.70
 
 Usage
 -----
