@@ -42,11 +42,6 @@ class coin(object):
         self.price_usd = get_price_usd(self.symbol)
         self.value_usd = self.amount_owned*self.price_usd
 
-    def __repr__(self):
-        return "{}: {:>5}, ${:,.0f}/coin, ${:,.0f}\n".format(
-            self.symbol, self.amount_owned, self.price_usd, self.value_usd)
-
-
 class portfolio(object):
     def __init__(self, assets):
         self.coins = {}
@@ -62,26 +57,16 @@ class portfolio(object):
             value += coin.value_usd
         return value
 
-    def __repr__(self):
-        buf = "Portfolio Positions\n"
-        buf += "====================\n"
-        lines = []
-        for symbol, coin in self.coins.items():
-            lines.append(coin.__repr__())
-        lines.sort()
-        buf += "".join(lines)
-        buf += "Portfolio(USD): ${:,.0f}".format(self.value)
-        return buf
-
     def _get_my_cap_by_percent(self):
         crypto_by_percent = {}
         for symbol, coin in self.coins.items():
             crypto_by_percent[symbol] = coin.value_usd/self.value
         return crypto_by_percent
 
-    def crypto_by_weight(self):
+    def __repr__(self):
         buf = "\nCurrencies and their relative market weight\n"
         buf += "===========================================\n"
+        buf += "          Spot   Market Port   Position Rebalance\n"
         index = 0
         sorted_crypto_by_percent = sorted(self.crypto_cap_by_percent.items(), 
             key=operator.itemgetter(1), reverse=True)
@@ -92,14 +77,29 @@ class portfolio(object):
             change_percent = market_weight-self.my_cap_by_percent.get(
                 symbol, 0)
             change_usd = change_percent*self.value
+            position = 0
+            if self.coins.get(symbol):
+                position = self.coins[symbol].value_usd
             if market_weight < .005 and self.my_cap_by_percent.get(symbol, 0) == 0:
                 continue
+
+            spot = get_price_usd(symbol)
+            if spot < 100:
+                spot = "{:<5,.2f}".format(spot)
+            else:
+                spot = "{:<5,}".format(int(spot))
             lines.append(
-                "{:>2}. {:>5}: market: {:>5.2f}% portfolio: {:>5.2f}% rebalance: ${:,.0f}\n".format(
+                "{:>2}. {:<5} ${} {:>5.2f}% {:>5.2f}% ${:<6,.0f} ${:,.0f}\n".format(
                     index,
-                    symbol, market_weight*100,
+                    symbol,
+                    spot,
+                    market_weight*100,
                     self.my_cap_by_percent.get(symbol, 0)*100,
+                    position,
                     change_usd))
+
+        lines.append("\n")
+        lines.append("Total: ${:,.2f}".format(self.value))
         return buf + "".join(lines)
 
 
@@ -116,4 +116,3 @@ if __name__ == "__main__":
 
     my_port = portfolio(holdings)
     print(my_port)
-    print(my_port.crypto_by_weight())
