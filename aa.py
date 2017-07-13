@@ -7,6 +7,7 @@ import requests
 import sys
 import yaml
 
+MIN_WEIGHT = .005 # Minimum market weight to show, unless in portfolio
 DATA = requests.get('https://api.coinmarketcap.com/v1/ticker/').json()
 
 
@@ -80,23 +81,26 @@ class portfolio(object):
             position = 0
             if self.coins.get(symbol):
                 position = self.coins[symbol].value_usd
-            if market_weight < .005 and self.my_cap_by_percent.get(symbol, 0) == 0:
+            if market_weight < MIN_WEIGHT and self.my_cap_by_percent.get(symbol, 0) == 0:
                 continue
 
             spot = get_price_usd(symbol)
-            if spot < 100:
+            if spot < .10:
+                spot = "{:<5,.4f}".format(spot).lstrip('0')
+            elif spot < 100:
                 spot = "{:<5,.2f}".format(spot)
             else:
                 spot = "{:<5,}".format(int(spot))
             lines.append(
-                "{:>2}. {:<5} ${} {:>5.2f}% {:>5.2f}% ${:<6,.0f} ${:,.0f}\n".format(
-                    index,
-                    symbol,
-                    spot,
-                    market_weight*100,
-                    self.my_cap_by_percent.get(symbol, 0)*100,
-                    position,
-                    change_usd))
+                "{:>2}. {:<5} ${} {:>5.2f}% {:>5.2f}% ${:<6,.0f} ${:,.0f}\n".
+                    format(
+                        index,
+                        symbol,
+                        spot,
+                        market_weight*100,
+                        self.my_cap_by_percent.get(symbol, 0)*100,
+                        position,
+                        change_usd))
 
         lines.append("\n")
         lines.append("Total: ${:,.2f}".format(self.value))
