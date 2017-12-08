@@ -6,6 +6,9 @@ import os
 import requests
 import sys
 import yaml
+from tabulate import tabulate
+import locale
+locale.setlocale( locale.LC_ALL, '' )
 
 MIN_WEIGHT = .005 # Minimum market weight to show, unless in portfolio
 DATA = requests.get('https://api.coinmarketcap.com/v1/ticker/').json()
@@ -67,12 +70,12 @@ class portfolio(object):
     def __repr__(self):
         buf = "\nCurrencies and their relative market weight\n"
         buf += "===========================================\n"
-        buf += "          Spot   Market Port   Position Rebalance\n"
         index = 0
-        sorted_crypto_by_percent = sorted(self.crypto_cap_by_percent.items(), 
+        sorted_crypto_by_percent = sorted(self.crypto_cap_by_percent.items(),
             key=operator.itemgetter(1), reverse=True)
 
         lines = []
+        data = []
         for symbol, market_weight in sorted_crypto_by_percent:
             index += 1
             change_percent = market_weight-self.my_cap_by_percent.get(
@@ -85,12 +88,21 @@ class portfolio(object):
                 continue
 
             spot = get_price_usd(symbol)
-            if spot < .10:
-                spot = "{:<5,.4f}".format(spot).lstrip('0')
-            elif spot < 100:
-                spot = "{:<5,.2f}".format(spot)
-            else:
-                spot = "{:<5,}".format(int(spot))
+            # if spot < .10:
+            #     spot = "{:<5,.4f}".format(spot).lstrip('0')
+            # elif spot < 100:
+            #     spot = "{:<5,.2f}".format(spot)
+            # else:
+            #     spot = "{:<5,}".format(int(spot))
+            data.append([
+                index,
+                symbol,
+                locale.currency(spot, grouping=True),
+                format(market_weight*100, '5.2f'),
+                format(self.my_cap_by_percent.get(symbol, 0)*100, '5.2f'),
+                locale.currency(position, grouping=True),
+                locale.currency(change_usd, grouping=True)
+                ])
             lines.append(
                 "{:>2}. {:<5} ${} {:>5.2f}% {:>5.2f}% ${:<6,.0f} ${:,.0f}\n".
                     format(
@@ -102,9 +114,8 @@ class portfolio(object):
                         position,
                         change_usd))
 
-        lines.append("\n")
-        lines.append("Total: ${:,.2f}".format(self.value))
-        return buf + "".join(lines)
+        return tabulate(sorted(data), headers=('Coin','Spot', 'Market', 'Port', 'Position', 'Rebalance'), tablefmt="presto")
+
 
 
 def usage():
@@ -119,4 +130,6 @@ if __name__ == "__main__":
         holdings = yaml.load(f)['portfolio']
 
     my_port = portfolio(holdings)
+
     print(my_port)
+    print("Total: ${:,.2f}".format(my_port.value))
