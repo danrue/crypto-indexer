@@ -8,25 +8,23 @@ its value, all cryptocurrencies with more than .5% overall market capitalization
 weight, and the amount required to rebalance equally across said currencies.
 
     $ ./aa.py portfolio.yaml-sample
-
-    Currencies and their relative market weight
-    ===========================================
-              Spot   Market Port   Position Rebalance
-     1. BTC   $2,456 38.91% 77.14% $51,591 $-25,569
-     2. ETH   $353   31.63% 22.22% $14,862 $6,292
-     3. XRP   $0.26   9.62%  0.00% $0      $6,432
-     4. XEM   $0.19   1.67%  0.00% $0      $1,120
-     5. ETC   $18.03  1.61%  0.00% $0      $1,079
-     6. LTC   $30.21  1.51%  0.59% $393    $614
-     7. DASH  $163    1.16%  0.00% $0      $776
-     8. MIOTA $0.33   0.90%  0.00% $0      $601
-     9. BTS   $0.32   0.81%  0.00% $0      $543
-    10. STRAT $7.85   0.75%  0.00% $0      $499
-    11. XMR   $45.68  0.65%  0.00% $0      $432
-    12. ZEC   $384    0.57%  0.00% $0      $381
-    18. XLM   $0.04   0.35%  0.05% $31     $200
-
-    Total: $66,877.70
+        | Coin   | Spot       | Market   | Port   | Position   | Rebalance
+    ----+--------+------------+----------+--------+------------+-------------
+      1 | BTC    | $17,370.70 | 66.58%   | 62.68% | $86,853.50 | $5,401.60
+      2 | ETH    | $429.68    | 9.47%    | 31.01% | $42,968.40 | -$29,843.82
+      3 | BCH    | $1,554.17  | 6.00%    | 5.61%  | $7,770.85  | $540.48
+      4 | MIOTA  | $3.80      | 2.42%    | 0.00%  | $0.00      | $3,356.06
+      5 | XRP    | $0.26      | 2.31%    | 0.00%  | $0.00      | $3,203.77
+      6 | DASH   | $692.33    | 1.23%    | 0.00%  | $0.00      | $1,701.36
+      7 | LTC    | $98.02     | 1.22%    | 0.71%  | $980.20    | $706.24
+      8 | BTG    | $270.88    | 1.04%    | 0.00%  | $0.00      | $1,435.79
+      9 | XMR    | $279.59    | 0.99%    | 0.00%  | $0.00      | $1,371.46
+     10 | ADA    | $0.11      | 0.68%    | 0.00%  | $0.00      | $946.26
+     11 | ETC    | $27.29     | 0.61%    | 0.00%  | $0.00      | $850.85
+     12 | XLM    | $0.14      | 0.56%    | 0.00%  | $0.00      | $782.41
+     13 | XEM    | $0.25      | 0.51%    | 0.00%  | $0.00      | $712.23
+     14 | NEO    | $34.27     | 0.51%    | 0.00%  | $0.00      | $707.16
+    Total: $138,572.95
 
 Usage
 -----
@@ -38,7 +36,7 @@ Requirements
 ------------
 
 - python3
-- python3 requests library (`sudo pip3 install requests`)
+- python3 libraries: requests, tabulate (`pip3 install --user requests tabulate`)
 
 Background and personal opinions...
 -----------------------------------
