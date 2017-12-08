@@ -77,7 +77,6 @@ class portfolio(object):
         sorted_crypto_by_percent = sorted(self.crypto_cap_by_percent.items(),
             key=operator.itemgetter(1), reverse=True)
 
-        lines = []
         data = []
         for symbol, market_weight in sorted_crypto_by_percent:
             index += 1
@@ -91,31 +90,15 @@ class portfolio(object):
                 continue
 
             spot = get_price_usd(symbol)
-            # if spot < .10:
-            #     spot = "{:<5,.4f}".format(spot).lstrip('0')
-            # elif spot < 100:
-            #     spot = "{:<5,.2f}".format(spot)
-            # else:
-            #     spot = "{:<5,}".format(int(spot))
             data.append([
                 index,
                 symbol,
                 locale.currency(spot, grouping=True),
-                format(market_weight*100, '5.2f'),
-                format(self.my_cap_by_percent.get(symbol, 0)*100, '5.2f'),
+                "{:>5.2f}%".format(market_weight*100),
+                "{:>5.2f}%".format(self.my_cap_by_percent.get(symbol, 0)*100),
                 locale.currency(position, grouping=True),
                 locale.currency(change_usd, grouping=True)
                 ])
-            lines.append(
-                "{:>2}. {:<5} ${} {:>5.2f}% {:>5.2f}% ${:<6,.0f} ${:,.0f}\n".
-                    format(
-                        index,
-                        symbol,
-                        spot,
-                        market_weight*100,
-                        self.my_cap_by_percent.get(symbol, 0)*100,
-                        position,
-                        change_usd))
 
         return tabulate(sorted(data), headers=('Coin','Spot', 'Market', 'Port', 'Position', 'Rebalance'), tablefmt="presto")
 
