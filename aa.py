@@ -8,9 +8,9 @@ import sys
 import yaml
 from tabulate import tabulate
 import locale
-locale.setlocale( locale.LC_ALL, '' )
+locale.setlocale(locale.LC_ALL, '')
 
-MIN_WEIGHT = .005 # Minimum market weight to show, unless in portfolio
+MIN_WEIGHT = .005  # Minimum market weight to show, unless in portfolio
 DATA = requests.get('https://api.coinmarketcap.com/v1/ticker/').json()
 
 
@@ -49,6 +49,7 @@ class coin(object):
         self.price_usd = get_price_usd(self.symbol)
         self.value_usd = self.amount_owned*self.price_usd
 
+
 class portfolio(object):
     def __init__(self, assets):
         self.coins = {}
@@ -75,7 +76,8 @@ class portfolio(object):
         buf += "===========================================\n"
         index = 0
         sorted_crypto_by_percent = sorted(self.crypto_cap_by_percent.items(),
-            key=operator.itemgetter(1), reverse=True)
+                                          key=operator.itemgetter(1),
+                                          reverse=True)
 
         data = []
         for symbol, market_weight in sorted_crypto_by_percent:
@@ -86,7 +88,8 @@ class portfolio(object):
             position = 0
             if self.coins.get(symbol):
                 position = self.coins[symbol].value_usd
-            if market_weight < MIN_WEIGHT and self.my_cap_by_percent.get(symbol, 0) == 0:
+            if (market_weight < MIN_WEIGHT and
+                    self.my_cap_by_percent.get(symbol, 0) == 0):
                 continue
 
             spot = get_price_usd(symbol)
@@ -100,8 +103,9 @@ class portfolio(object):
                 locale.currency(change_usd, grouping=True)
                 ])
 
-        return tabulate(sorted(data), headers=('Coin','Spot', 'Market', 'Port', 'Position', 'Rebalance'), tablefmt="presto")
-
+        return tabulate(sorted(data),
+                        headers=('Coin', 'Spot', 'Market', 'Port',
+                                 'Position', 'Rebalance'), tablefmt="presto")
 
 
 def usage():
