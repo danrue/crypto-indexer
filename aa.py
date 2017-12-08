@@ -19,6 +19,9 @@ def get_price_usd(coin):
         if coin == crypto['symbol']:
             return float(crypto['price_usd'])
 
+    # Coin is unlisted
+    return 0
+
 
 def get_crypto_cap_by_percent():
     crypto_by_cap = {}
